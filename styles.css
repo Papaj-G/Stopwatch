@@ -1,0 +1,18 @@
+* {
+	margin-left: auto;
+	margin-right: auto;
+	font-family: "Courier New", Courier, monospace;
+}
+.timer {
+	display: flex;
+    align-self: center;
+	font-size: 5vw;
+}
+.control {
+	display: flex;
+	flex-direction: row;
+	margin: auto;
+}
+button{
+    cursor: pointer;
+}
