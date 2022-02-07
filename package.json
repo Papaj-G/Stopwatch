@@ -8,10 +8,14 @@
 	"version": "1.0.0",
 	"main": "stopwatch.js",
 	"scripts": {
-		"test": "jest"
-    ,"deploy": "parcel website.html"
+		"test": "jest",
+		"deploy": "parcel website.html"
 	},
 	"author": "",
 	"license": "ISC",
-	"description": ""
+	"description": "",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Papaj-G/Stopwatch.git"
+	}
 }

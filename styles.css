@@ -5,7 +5,7 @@
 }
 .timer {
 	display: flex;
-    align-self: center;
+	align-self: center;
 	font-size: 5vw;
 }
 .control {
@@ -13,6 +13,6 @@
 	flex-direction: row;
 	margin: auto;
 }
-button{
-    cursor: pointer;
+button {
+	cursor: pointer;
 }
