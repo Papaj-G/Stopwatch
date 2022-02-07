@@ -521,12 +521,16 @@ function hmrAcceptRun(bundle, id) {
 },{}],"6rimH":[function(require,module,exports) {
 var _stopwatchClassJs = require("./stopwatch.class.js");
 // HTML Elements refs
-const stopwatchDisplay = document.getElementById("stopwatch");
+const stopwatchDisplay = document.getElementById("timer");
 const btnStart = document.getElementById("btnStart");
 const btnStop = document.getElementById("btnStop");
 const btnReset = document.getElementById("btnReset");
-const objStopwatch = new _stopwatchClassJs.Stopwatch(false, 10);
-objStopwatch.attach(stopwatchDisplay, btnStart);
+const displayMS = document.getElementById("ms");
+const displaySS = document.getElementById("ss");
+const displayMM = document.getElementById("mm");
+const displayHH = document.getElementById("hh");
+const objStopwatch = new _stopwatchClassJs.Stopwatch(true, 1);
+objStopwatch.attach(stopwatchDisplay, btnStart, displayMS, displaySS, displayMM, displayHH);
 btnStart.addEventListener("click", ()=>objStopwatch.start()
 );
 btnStop.addEventListener("click", ()=>objStopwatch.stop()
@@ -541,22 +545,30 @@ parcelHelpers.export(exports, "Stopwatch", ()=>Stopwatch
 );
 class Stopwatch {
     constructor(ticking, refreshrate){
-        this.ticking = ticking ?? false;
-        this.tickTimeOld = this.getCurrentTime();
-        this.tickTimeDelta = 0;
-        this.refreshrate = refreshrate ?? 1;
-        this.refOutputElement;
-        this.refButtonElement;
+        this._ms;
+        this._ss;
+        this._mm;
+        this._hh;
         this.paused = false;
         this.started = false;
-        if (ticking) this.started = true;
+        this.ticking = ticking ?? false;
+        this.tickTimeOld = this.getCurrentTime();
+        this.elapsedTime = 0;
+        this.refreshrate = refreshrate ?? 1;
+        this.refOutputElement;
+        this.refOutputElementMS;
+        this.refOutputElementSS;
+        this.refOutputElementMM;
+        this.refOutputElementHH;
+        this.refButtonElement;
+        if (ticking) this.start();
         this.clock = setInterval(()=>this.tick()
         , this.refreshrate);
     }
     tick() {
         if (this.ticking) {
             var tickTimeNew = this.getCurrentTime();
-            this.tickTimeDelta += tickTimeNew - this.tickTimeOld;
+            this.elapsedTime += tickTimeNew - this.tickTimeOld;
             this.tickTimeOld = tickTimeNew;
             this.updateAttachedRef();
         }
@@ -575,7 +587,7 @@ class Stopwatch {
     }
     reset() {
         this.tickTimeOld = this.getCurrentTime();
-        this.tickTimeDelta = 0;
+        this.elapsedTime = 0;
         this.started = false;
         this.paused = false;
         this.updateAttachedRef();
@@ -590,16 +602,36 @@ class Stopwatch {
         var hh = Math.floor(mm / 60);
         return hh % 24 + "h " + mm % 60 + "m " + ss % 60 + "s " + ms % 1000;
     }
-    attach(output, btn) {
+    attach(output, btn, ms, ss, mm, hh) {
         this.refButtonElement = btn;
         this.refOutputElement = output;
+        this.refOutputElementMS = ms;
+        this.refOutputElementSS = ss;
+        this.refOutputElementMM = mm;
+        this.refOutputElementHH = hh;
     }
     updateAttachedRef() {
-        if (this.refOutputElement) this.refOutputElement.innerText = this.formatTime(this.tickTimeDelta);
+        if (this.refOutputElement) this.refOutputElement.innerText = this.formatTime(this.elapsedTime);
         if (this.refButtonElement) {
             if (this.paused) this.refButtonElement.innerText = "Resume";
             else this.refButtonElement.innerText = "Start";
         }
+        if (this.refOutputElementMS) this.refOutputElementMS.innerText = this.MS();
+        if (this.refOutputElementSS) this.refOutputElementSS.innerText = this.SS();
+        if (this.refOutputElementMM) this.refOutputElementMM.innerText = this.MM();
+        if (this.refOutputElementHH) this.refOutputElementHH.innerText = this.HH();
+    }
+    MS() {
+        return Math.floor(this.elapsedTime % 1000);
+    }
+    SS() {
+        return Math.floor(this.elapsedTime / 1000 % 60);
+    }
+    MM() {
+        return Math.floor(this.elapsedTime / 1000 / 60 % 60);
+    }
+    HH() {
+        return Math.floor(this.elapsedTime / 1000 / 60 / 60 % 24);
     }
 }
 
