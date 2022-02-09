@@ -8,16 +8,16 @@
 		<script type="module" src="script.js"></script>
 	</head>
 	<body>
-		<section class="DisplayPanel">
-			<h1><span id="hh"></span>h</h1>
-			<h1><span id="mm"></span>m</h1>
-			<h1><span id="ss"></span>s</h1>
-			<h1><span id="ms"></span>ms</h1>
-		</section>
-		<section class="ControlPanel">
-			<button id="btnStart">Start</button>
-			<button id="btnStop">Stop</button>
-			<button id="btnReset">Reset</button>
-		</section>
+		<div class="lapTimes">
+			<h1 class="text">Lap Times</h1>
+			<div id="lapList"></div>
+		</div>
+		<div class="stopwatch">
+			<h1 id="display" class="time">00:00:00</h1>
+			<div class="buttons">
+				<button id="button_Start" class="text">START</button>
+				<button id="button_Stop" class="text">STOP</button>
+			</div>
+		</div>
 	</body>
 </html>

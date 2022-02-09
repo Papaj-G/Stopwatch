@@ -1,22 +1,12 @@
 export class Stopwatch {
-	constructor(ticking, refreshrate) {
-		this._ms;
-		this._ss;
-		this._mm;
-		this._hh;
-		this.paused = false;
+	constructor(ticking) {
 		this.started = false;
 		this.ticking = ticking ?? false;
 		this.tickTimeOld = this.getCurrentTime();
 		this.elapsedTime = 0;
-		this.refreshrate = refreshrate ?? 1;
-		this.refOutputElement;
-		this.refOutputElementMS;
-		this.refOutputElementSS;
-		this.refOutputElementMM;
-		this.refOutputElementHH;
-		this.refButtonElement;
-
+		this.refreshrate = 1;
+		this.lapTimes = [];
+		this.startTime;
 		if (ticking) {
 			this.start();
 		}
@@ -27,83 +17,70 @@ export class Stopwatch {
 			var tickTimeNew = this.getCurrentTime();
 			this.elapsedTime += tickTimeNew - this.tickTimeOld;
 			this.tickTimeOld = tickTimeNew;
-			this.updateAttachedRef();
 		}
 	}
 	start() {
+		if (this.started) {
+			this.lap();
+		}
 		this.ticking = true;
 		this.tickTimeOld = this.getCurrentTime();
+		this.startTime = this.tickTimeOld;
 		this.started = true;
 		this.paused = false;
-		this.updateAttachedRef();
 	}
 	stop() {
-		this.ticking = false;
-		if (this.started) {
+		if (this.paused) {
+			this.reset();
+			return;
+		} else {
+			this.ticking = false;
 			this.paused = true;
 		}
-		this.updateAttachedRef();
 	}
-
+	lap() {
+		if (this.lapTimes.length == 0) {
+			this.lapTimes.push(this.elapsedTime);
+		} else {
+			this.lapTimes.push(this.getCurrentTime() - this.startTime);
+		}
+	}
 	reset() {
-		this.tickTimeOld = this.getCurrentTime();
 		this.elapsedTime = 0;
+		this.lapTimes = [];
 		this.started = false;
 		this.paused = false;
-		this.updateAttachedRef();
+		this.ticking = false;
 	}
 	getCurrentTime() {
 		return new Date().getTime();
 	}
-	formatTime(time) {
-		var ms = time;
-		var ss = Math.floor(time / 1000);
-		var mm = Math.floor(ss / 60);
-		var hh = Math.floor(mm / 60);
-		return (hh % 24) + "h " + (mm % 60) + "m " + (ss % 60) + "s " + (ms % 1000);
-	}
-	attach(output, btn, ms, ss, mm, hh) {
-		this.refButtonElement = btn;
-		this.refOutputElement = output;
-		this.refOutputElementMS = ms;
-		this.refOutputElementSS = ss;
-		this.refOutputElementMM = mm;
-		this.refOutputElementHH = hh;
-	}
-	updateAttachedRef() {
-		if (this.refOutputElement) {
-			this.refOutputElement.innerText = this.formatTime(this.elapsedTime);
-		}
-		if (this.refButtonElement) {
-			if (this.paused) {
-				this.refButtonElement.innerText = "Resume";
-			} else {
-				this.refButtonElement.innerText = "Start";
-			}
-		}
-		if (this.refOutputElementMS) {
-			this.refOutputElementMS.innerText = this.MS();
-		}
-		if (this.refOutputElementSS) {
-			this.refOutputElementSS.innerText = this.SS();
-		}
-		if (this.refOutputElementMM) {
-			this.refOutputElementMM.innerText = this.MM();
-		}
-		if (this.refOutputElementHH) {
-			this.refOutputElementHH.innerText = this.HH();
+	MS(number) {
+		if (number) {
+			return Math.floor(number % 1000);
+		} else {
+			return Math.floor(this.elapsedTime % 1000);
 		}
 	}
-	MS() {
-		return Math.floor(this.elapsedTime % 1000);
+	SS(number) {
+		if (number) {
+			return Math.floor((number / 1000) % 60);
+		} else {
+			return Math.floor((this.elapsedTime / 1000) % 60);
+		}
 	}
-	SS() {
-		return Math.floor((this.elapsedTime / 1000) % 60);
+	MM(number) {
+		if (number) {
+			return Math.floor((number / 1000 / 60) % 60);
+		} else {
+			return Math.floor((this.elapsedTime / 1000 / 60) % 60);
+		}
 	}
-	MM() {
-		return Math.floor((this.elapsedTime / 1000 / 60) % 60);
-	}
-	HH() {
-		return Math.floor((this.elapsedTime / 1000 / 60 / 60) % 24);
+	HH(number) {
+		if (number) {
+			return Math.floor((number / 1000 / 60 / 60) % 24);
+		} else {
+			return Math.floor((this.elapsedTime / 1000 / 60 / 60) % 24);
+		}
 	}
 }
